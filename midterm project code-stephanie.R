@@ -8,9 +8,11 @@ st(bad_drivers)
 
 #boxplots
 boxplot(bad_drivers$Number.of.drivers.involved.in.fatal.collisions.per.billion.miles,
-        main = "number of drivers in accidents")
-boxplot(bad_drivers$Car.Insurance.Premiums....)
-boxplot(bad_drivers$Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver....)
+        main = "Number of Drivers Involved in Fatal Collisions per Billion Miles")
+boxplot(bad_drivers$Car.Insurance.Premiums....,
+        main = "Car Insurance Premiums")
+boxplot(bad_drivers$Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver....,
+        main = "Losses Incurred by Insurance Companies for Collisions per Insured Driver")
 
 
 # What states have the highest number of car accidents and car insurance premiums?
