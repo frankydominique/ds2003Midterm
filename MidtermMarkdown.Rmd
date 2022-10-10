@@ -65,7 +65,7 @@ ggsave('PremiumsAndLosses', plot=question2, device='png')
 ```
 
 ```{r}
-question3 <- ggplot(bad_drivers, aes(x=state_code, y=`Number of drivers involved in fatal collisions per billion miles`))+
+question3 <- ggplot(bad_drivers, aes(x=regions, y=`Number of drivers involved in fatal collisions per billion miles`))+
   geom_col(aes(fill=regions))+
   scale_x_discrete(guide = guide_axis(n.dodge=3))+
   labs(title='Number of fatal Collisions per Billion Miles per State', x='State Code')
