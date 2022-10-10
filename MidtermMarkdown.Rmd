@@ -1,81 +1,140 @@
 ---
 title: "Bad Drivers Report"
-author: "Franceska Padilla Coo"
+authors: "Franceska Padilla Coo, Stephanie Fissel, Tatev Gomtsyan"
 date: "October 9, 2022"
 output:
   html_document:
-    toc: TRUE
-    theme: lumen
+    theme: cerulean
+    code_folding: hide
+    toc: true
+    toc_float: 
+      collapsed: true
+      smooth_scroll: false
     toc_depth: 3
-    code_folding: show
-    toc_float: TRUE
+author: Franceska Padilla Coo, Stephanie Fissel, Tatev Gomtsyan
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE, cache=TRUE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-
 ```
 
+## Workspace Prep 
+* Data source:
+[Github](https://github.com/fivethirtyeight/data/blob/master/bad-drivers/bad-drivers.csv)
+
+# Load Packages 
 ```{r}
 library(tidyverse)
+library(ggplot2)
 ```
 
+# Read in Data
 ```{r}
-bad_drivers <- read_csv('bad-drivers.csv')
+bad_drivers <- read.csv("C:/Users/Student/Desktop/UVA/UVA '22 Fall/DS 2003/ds2003Midterm-main/bad-drivers.csv")
+states_w_regions <- read.csv("C:/Users/Student/Desktop/UVA/UVA '22 Fall/DS 2003/ds2003Midterm-main/us_states_w_regions.csv")
 ```
 
+# Datasets
+
+***Bad Drivers*** <br/> 
+A dataset with information from the National Highway Traffic Safety Administration and the National Association of Insurance Commissioners from 2009 to 2012. Data includes fatal collisions due to certain causes, car insurance premiums, and losses incurred by insurance companies for collisions. 
+```{r}
+head(bad_drivers)
+```
+
+***States and their Regions*** <br/>
+A dataset with all US states, their codes, and respective regions and divisions.
+```{r}
+head(states_w_regions)
+```
+# Report Objectives
+1. Determining which states/geographic regions have the highest number of car accidents
+2. Determining if there is a relationship between insurance company losses and driver insurance premiums
 ```{r}
 bad_drivers['state_areas'] <- c(50750, 570641, 113642, 52075, 155973, 103730, 4845, 1955, 68.32, 53997, 57919, 6423, 82751, 55593, 35870, 55875, 81823, 39732, 43566, 30865, 9775, 7838, 56539, 79617, 46914, 68898, 145556, 76878, 109806, 8969, 7419, 121365, 47224, 48718, 68994, 40953, 68679, 96003, 44820, 1034, 30111, 75898, 41220, 261914, 83168, 9249, 39598, 66582, 24087, 54314, 97105)
 colnames(bad_drivers)
-```
-```{r}
-states_w_regions <- read_csv('us_states_w_regions.csv')
+
 states_w_regions <- states_w_regions[order(states_w_regions$State), ]
 bad_drivers['regions'] <- states_w_regions['Region']
-bad_drivers['state_code'] <- states_w_regions['State Code']
+bad_drivers['State'] <- states_w_regions['State.Code']
+```
+# Descriptive Statistics 
+```{r}
+bad_drivers1 <- subset(bad_drivers, select = -c(Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Were.Speeding,
+                                                Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Were.Alcohol.Impaired,
+                                                Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Were.Not.Distracted,
+                                                Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Had.Not.Been.Involved.In.Any.Previous.Accidents))
+
+colnames(bad_drivers1)[2] ="Number of Drivers Involved in Fatal Collisions per Billion Miles"
+colnames(bad_drivers1)[3] ="Car Insurance Premiums"
+colnames(bad_drivers1)[4] ="Losses Incurred by Insurance Companies for Collisions per Insured Driver"
+
+#install.packages("vtable")
+library(vtable)
+st(bad_drivers1)
+
+#boxplots
+#boxplot(bad_drivers$Number.of.drivers.involved.in.fatal.collisions.per.billion.miles,
+ #       main = "Number of Drivers Involved in Fatal Collisions per Billion Miles")
+#boxplot(bad_drivers$Car.Insurance.Premiums....,
+      #  main = "Car Insurance Premiums")
+#boxplot(bad_drivers$Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver....,
+   #     main = "Losses Incurred by Insurance Companies for Collisions per Insured Driver")
 ```
 
-```{r}
-question1 <- ggplot(bad_drivers, aes(x=`Number of drivers involved in fatal collisions per billion miles`*10^4, y=state_areas, color=regions))+
-  geom_point()+
-  geom_smooth(method='lm',se=FALSE)+
-  geom_text(aes(label= ifelse(state_areas > quantile(state_areas, 0.95),
-     as.character(State),'')),hjust=0,vjust=0)+
-  labs(title='Western Region Has More Area (miles) per State and Collisions', 
-       x='Number of Drivers Involved in Fatal Collisions per 1000 Miles', 
-       y='State Areas in Miles')
+# Objective 1
+**Understanding the number of drivers involved in fatal collisions per billion miles by state and region**
 
+## Results (by State) {.tabset}
+```{r}
+colnames(bad_drivers)[2] = "Number of drivers involved in fatal collisions per billion miles"
+
+question1 <- ggplot(bad_drivers, aes(x=State, y=`Number of drivers involved in fatal collisions per billion miles`))+
+  geom_col(aes(fill=regions))+
+  scale_x_discrete(guide = guide_axis(n.dodge=3))+
+  labs(title='Number of fatal Collisions per Billion Miles per State', x='State Code')
 question1
 ```
 
+## Results (by Region) {.tabset}
 ```{r}
-ggsave('CollisionsAndStateArea', plot=question1, device='png')
-```
+byregion<- ggplot(bad_drivers, aes(x=regions, y=`Number of drivers involved in fatal collisions per billion miles`))+
+  geom_col(aes(fill=regions))+
+  scale_x_discrete(guide = guide_axis(n.dodge=3))+
+  labs(title='Number of fatal Collisions per Billion Miles per Region', x='Region')
+byregion
+``` 
+
+> Southern Region leads in number of drivers involved in fatal collisions per billion miles   
 
 ```{r}
-question2 <- ggplot(bad_drivers, aes(x=`Losses incurred by insurance companies for collisions per insured driver ($)`, y=`Car Insurance Premiums ($)`, color=regions))+
+ggsave('AccidentsVSState', plot=question1, device='png')
+ggsave('AccidentsVSRegion', plot=byregion, device='png')
+```
+
+# Objective 2
+**Determining if there is a relationship between insurance company losses and driver insurance premiums**
+```{r}
+colnames(bad_drivers)[8] = "Losses incurred by insurance companies for collisions per insured driver"
+colnames(bad_drivers)[7] = "Car Insurance Premiums"
+question2 <- ggplot(bad_drivers, aes(x=`Losses incurred by insurance companies for collisions per insured driver`, y=`Car Insurance Premiums`, color=regions))+
   geom_point()+
   geom_smooth(method='lm', se=FALSE)
   
 question2
 ```
 
+> Strong correlation found between premiums and losses in Midwest Region
+
 ```{r}
 ggsave('PremiumsAndLosses', plot=question2, device='png')
 ```
 
-```{r}
-question3 <- ggplot(bad_drivers, aes(x=regions, y=`Number of drivers involved in fatal collisions per billion miles`))+
-  geom_col(aes(fill=regions))+
-  scale_x_discrete(guide = guide_axis(n.dodge=3))+
-  labs(title='Number of fatal Collisions per Billion Miles per State', x='State Code')
-  
-  
-question3
-```
-```{r}
-ggsave('AccidentsVSState', plot=question3, device='png')
-```
+
+
+
 
 
 
