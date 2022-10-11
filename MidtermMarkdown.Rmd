@@ -28,6 +28,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```{r}
 library(tidyverse)
 library(ggplot2)
+library(tibble)
 ```
 
 # Read in Data
@@ -60,7 +61,8 @@ states_w_regions <- states_w_regions[order(states_w_regions$State), ]
 bad_drivers['regions'] <- states_w_regions['Region']
 bad_drivers['State'] <- states_w_regions['State.Code']
 ```
-# Descriptive Statistics 
+# Descriptive Statistics {.tabset}
+## **SUMMARY STATS**
 ```{r}
 bad_drivers1 <- subset(bad_drivers, select = -c(Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Were.Speeding,
                                                 Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Were.Alcohol.Impaired,
@@ -74,20 +76,83 @@ colnames(bad_drivers1)[4] ="Losses Incurred by Insurance Companies for Collision
 #install.packages("vtable")
 library(vtable)
 st(bad_drivers1)
-
-#boxplots
-#boxplot(bad_drivers$Number.of.drivers.involved.in.fatal.collisions.per.billion.miles,
- #       main = "Number of Drivers Involved in Fatal Collisions per Billion Miles")
-#boxplot(bad_drivers$Car.Insurance.Premiums....,
-      #  main = "Car Insurance Premiums")
-#boxplot(bad_drivers$Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver....,
-   #     main = "Losses Incurred by Insurance Companies for Collisions per Insured Driver")
 ```
 
-# Objective 1
+## **BOXPLOTS**
+```{r}
+#boxplots
+boxplot(bad_drivers$Number.of.drivers.involved.in.fatal.collisions.per.billion.miles,
+        main = "Number of Drivers Involved in Fatal Collisions per Billion Miles")
+boxplot(bad_drivers$Car.Insurance.Premiums....,
+        main = "Car Insurance Premiums")
+boxplot(bad_drivers$Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver....,
+        main = "Losses Incurred by Insurance Companies for Collisions per Insured Driver")
+```
+
+```{r}
+bad_drivers1 <- subset(bad_drivers, select = -c(Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Were.Speeding,
+                                                Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Were.Alcohol.Impaired,
+                                                Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Were.Not.Distracted,
+                                                Percentage.Of.Drivers.Involved.In.Fatal.Collisions.Who.Had.Not.Been.Involved.In.Any.Previous.Accidents))
+
+colnames(bad_drivers1)[2] ="Number of Drivers Involved in Fatal Collisions per Billion Miles"
+colnames(bad_drivers1)[3] ="Car Insurance Premiums"
+colnames(bad_drivers1)[4] ="Losses Incurred by Insurance Companies for Collisions per Insured Driver"
+
+```
+
+## **SUMMARY OF NUMBER OF DRIVERS INVOLVED IN FATAL COLLISIONS PER BILLION MILES** 
+```{r}
+summary_stats1 <- summarise(bad_drivers, mean=mean(Number.of.drivers.involved.in.fatal.collisions.per.billion.miles, na.rm=TRUE),
+                           ymin=min(Number.of.drivers.involved.in.fatal.collisions.per.billion.miles, na.rm=TRUE),
+                           lower=quantile(Number.of.drivers.involved.in.fatal.collisions.per.billion.miles, 0.25),
+                           ymax=max(Number.of.drivers.involved.in.fatal.collisions.per.billion.miles, na.rm=TRUE),
+                           upper=quantile(Number.of.drivers.involved.in.fatal.collisions.per.billion.miles, 0.75))
+
+summary_stats1
+
+ggplot(summary_stats1, aes(x=1))+
+  geom_boxplot(aes(ymin=ymin, lower=lower, 
+                   middle=mean, upper=upper, ymax=ymax),
+               stat = "identity")
+```
+
+## **SUMMARY FOR CAR INSURANCE PREMIUMS**
+
+```{r}
+summary_stats2 <- summarise(bad_drivers, mean=mean(Car.Insurance.Premiums...., na.rm=TRUE),
+                           ymin=min(Car.Insurance.Premiums...., na.rm=TRUE),
+                           lower=quantile(Car.Insurance.Premiums...., 0.25),
+                           ymax=max(Car.Insurance.Premiums...., na.rm=TRUE),
+                           upper=quantile(Car.Insurance.Premiums...., 0.75))
+summary_stats2
+
+ggplot(summary_stats2, aes(x=1))+
+  geom_boxplot(aes(ymin=ymin, lower=lower, 
+                   middle=mean, upper=upper, ymax=ymax),
+               stat = "identity")
+```
+
+## **SUMMARY FOR LOSSES INCURRED BY INSURANCE COMPANIES FOR COLLISIONS PER INSURED DRIVER**
+
+```{r}
+summary_stats3 <- summarise(bad_drivers, mean=mean(Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver...., na.rm=TRUE),
+                           ymin=min(Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver...., na.rm=TRUE),
+                           lower=quantile(Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver...., 0.25),
+                           ymax=max(Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver...., na.rm=TRUE),
+                           upper=quantile(Losses.incurred.by.insurance.companies.for.collisions.per.insured.driver...., 0.75))
+summary_stats3
+
+ggplot(summary_stats3, aes(x=1))+
+  geom_boxplot(aes(ymin=ymin, lower=lower, 
+                   middle=mean, upper=upper, ymax=ymax),
+               stat = "identity")
+```
+
+# Objective 1 {.tabset}
 **Understanding the number of drivers involved in fatal collisions per billion miles by state and region**
 
-## Results (by State) {.tabset}
+## **Results (by State)**
 ```{r}
 colnames(bad_drivers)[2] = "Number of drivers involved in fatal collisions per billion miles"
 
@@ -98,7 +163,7 @@ question1 <- ggplot(bad_drivers, aes(x=State, y=`Number of drivers involved in f
 question1
 ```
 
-## Results (by Region) {.tabset}
+## **Results (by Region)**
 ```{r}
 byregion<- ggplot(bad_drivers, aes(x=regions, y=`Number of drivers involved in fatal collisions per billion miles`))+
   geom_col(aes(fill=regions))+
