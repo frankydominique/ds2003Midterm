@@ -22,7 +22,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ## Workspace Prep 
 * Data source:
-[Bad Drivers](https://github.com/fivethirtyeight/data/blob/master/bad-drivers/bad-drivers.csv)
+[Github](https://github.com/fivethirtyeight/data/blob/master/bad-drivers/bad-drivers.csv)
 
 # Load Packages 
 ```{r}
@@ -172,7 +172,7 @@ byregion<- ggplot(bad_drivers, aes(x=regions, y=`Number of drivers involved in f
 byregion
 ``` 
 
-> Southern Region leads in number of drivers involved in fatal collisions per billion miles   
+> Southern Region leads in number of drivers involved in fatal collisions per billion miles.   
 
 ```{r}
 ggsave('AccidentsVSState', plot=question1, device='png')
@@ -191,7 +191,7 @@ question2 <- ggplot(bad_drivers, aes(x=`Losses incurred by insurance companies f
 question2
 ```
 
-> Strong correlation found between premiums and losses in Midwest Region
+> Strongest correlation found between premiums and losses in Midwest Region due to how tightly bound the data points are to the regression line in comparison to the Northeast Region, which also shows a strong correlation but has more scattered data points. The greater the losses, the more the r^2 continues to get further from the line. 
 
 ```{r}
 ggsave('PremiumsAndLosses', plot=question2, device='png')
