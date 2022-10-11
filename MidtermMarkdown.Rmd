@@ -22,7 +22,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ## Workspace Prep 
 * Data source:
-[Github](https://github.com/fivethirtyeight/data/blob/master/bad-drivers/bad-drivers.csv)
+[Bad Drivers](https://github.com/fivethirtyeight/data/blob/master/bad-drivers/bad-drivers.csv)
 
 # Load Packages 
 ```{r}
