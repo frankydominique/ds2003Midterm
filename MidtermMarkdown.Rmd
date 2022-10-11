@@ -196,11 +196,13 @@ question2
 ```{r}
 ggsave('PremiumsAndLosses', plot=question2, device='png')
 ```
+<center>
+<img src="/Users/Student/Desktop/UVA/UVA '22 Fall/DS 2003/data/car.png" alt="Thank You!" 
+style="height: 100px; width: 200px;"/>
 
+<figcaption align = "center"><b>Thank you!</b></figcaption>
 
-
-
-
+<center>
 
 
 
