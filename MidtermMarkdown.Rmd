@@ -16,8 +16,8 @@ editor_options:
   chunk_output_type: inline
 ---
 
-```{r setup, include=FALSE, cache=TRUE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
 
 ## Workspace Prep 
